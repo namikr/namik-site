@@ -78,8 +78,8 @@ body {
 	   -moz-transition: all .45s;
 	        transition: all .45s;
 }
-.mainmenu .dropdown-menu .active { 
-	font-weight:bold;
+.mainmenu .dropdown-menu .active { 	
+		font-weight:bold;
 }
 .mainmenu .open .dropdown-menu { 
 	top:2px;
