@@ -1,0 +1,93 @@
+{
+  "name": "namik-site",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:html",
+    "lint:js": "eslint \"javascripts/**/*.js\" \"assets/js/**/*.js\" --ignore-pattern \"assets/js/modernizr.custom.72241.js\"",
+    "lint:css": "stylelint \"assets/css/**/*.css\"",
+    "lint:html": "htmlhint \"**/*.html\""
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "htmlhint": "^1.1.4",
+    "stylelint": "^15.11.0",
+    "stylelint-config-standard": "^34.0.0"
+  }
+}
+EOF
+
+cat > .eslintrc.json <<'EOF'
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["eslint:recommended"],
+  "parserOptions": {
+    "ecmaVersion": 2021
+  },
+  "rules": {
+    "no-unused-vars": ["warn", { "args": "none" }]
+  }
+}
+EOF
+
+cat > .stylelintrc.json <<'EOF'
+{
+  "extends": ["stylelint-config-standard"],
+  "rules": {
+    "selector-class-pattern": null
+  }
+}
+EOF
+
+cat > .htmlhintrc <<'EOF'
+{
+  "tagname-lowercase": true,
+  "attr-lowercase": true,
+  "attr-value-double-quotes": true,
+  "doctype-first": true,
+  "tag-pair": true,
+  "spec-char-escape": true,
+  "id-unique": true,
+  "src-not-empty": true,
+  "alt-require": true
+}
+EOF
+
+mkdir -p .github/workflows
+
+cat > .github/workflows/lint.yml <<'EOF'
+name: Lint Check
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run lint checks
+        run: npm run lint
+EOF
